@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Steganography Web App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="title">🛡️ Image Steganography Web App</h1>
+
+    <!-- ENCODE SECTION -->
+    <div class="card">
+        <h2 class="card-title encode">🔒 Encode (Hide Message)</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Select Image</label>
+            <input type="file" name="encode_image" required>
+
+            
+            <label>Secret Message</label>
+
+            <textarea
+                name="message"
+                id="encodeMessage"
+                placeholder="Enter secret message"
+                required>
+            </textarea>
+
+            <div class="char-count">
+                <span id="charCount">0</span> characters
+            </div>
+
+
+            <button class="btn encode-btn"
+                    type="submit"
+                    name="action"
+                    value="encode">
+                ⬇ Encrypt & Download
+            </button>
+        </form>
+    </div>
+
+    <!-- DECODE SECTION -->
+<div class="card">
+    <h2 class="card-title decode">🔓 Decode (Extract Message)</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Select Encoded Image</label>
+        <input type="file" name="decode_image" required>
+
+        <button class="btn decode-btn"
+                type="submit"
+                name="action"
+                value="decode">
+            Decode Message
+        </button>
+    </form>
+
+    {% if decoded_message %}
+    <h3>📩 Hidden Message:</h3>
+    <p id="decodedText"><b>{{ decoded_message }}</b></p>
+
+    <button class="btn speak-btn" onclick="speakMessage()">
+        🔊 Speak Message
+    </button>
+    {% endif %}
+</div>
+
+
+    <!-- INFO -->
+    <div class="info-box">
+        <h3>How it works</h3>
+        <p><b>Encoding:</b> Message is hidden using LSB steganography.</p>
+        <p><b>Decoding:</b> Upload encoded image to extract message.</p>
+        <p><b>Security:</b> Processing happens locally.</p>
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    const textarea = document.getElementById("encodeMessage");
+    const counter = document.getElementById("charCount");
+
+    if (!textarea || !counter) {
+        console.log("Character counter elements not found");
+        return;
+    }
+
+    textarea.addEventListener("input", () => {
+        counter.textContent = textarea.value.length;
+    });
+});
+function speakMessage() {
+    const text = document.getElementById("decodedText").innerText;
+
+    if (!text) {
+        alert("No message to speak");
+        return;
+    }
+
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = text;
+    speech.lang = "en-US";     // change to en-IN if you want
+    speech.rate = 1;           // speed (0.5 – 2)
+    speech.pitch = 1;          // voice pitch
+
+    window.speechSynthesis.speak(speech);
+}
+</script>
+
+
+</body>
+</html>
